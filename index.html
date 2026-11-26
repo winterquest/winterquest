@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="googlebot" content="noindex, nofollow, noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>З Новим Роком, Вікторіє! 🎄✨</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%84%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Marck+Script&family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Візуальний радіус курсора для ловлі сніжинок -->
+  <div id="mouseCatchRadius" class="mouse-catch-radius"></div>
+
+  <!-- Аудіотрек (Krapiva Jazz - Новий Рік) -->
+  <audio id="bgMusic" src="music.mp3" preload="auto" loop></audio>
+
+  <!-- ВЕРХНЯ ПАНЕЛЬ НАВІГАЦІЇ ТА ДОСЯГНЕНЬ (HUD) -->
+  <header class="top-holiday-hud">
+    <div class="hud-left-group">
+      <!-- Кнопка "Мої нагороди" з прогрес-баром 60% (7 з 12) -->
+      <button id="openRewardsBtn" class="hud-pill-btn rewards-hud-btn" title="Відкрити мої нагороди">
+        <span class="hud-icon">🏆</span>
+        <div class="hud-text-group">
+          <div class="hud-title-row">
+            <span class="hud-title">Мої нагороди</span>
+            <span class="hud-progress-counter" id="hudProgressText">0/7</span>
+          </div>
+          <div class="hud-mini-progress">
+            <div class="mini-progress-fill" id="hudProgressBar" style="width: 0%;"></div>
+          </div>
+        </div>
+      </button>
+
+      <!-- Швидка кнопка повернення до квесту -->
+      <button id="quickResumeBtn" class="hud-pill-btn resume-hud-btn hidden" title="Продовжити проходження квесту">
+        <span>🎯</span><span class="resume-label"> До квесту</span>
+      </button>
+    </div>
+
+    <div class="hud-right-group">
+      <!-- Кнопка Колеса Фортуни -->
+      <button id="openWheelBtn" class="hud-pill-btn wheel-hud-btn" title="Крутити Новорічне Колесо Фортуни">
+        <span class="hud-icon spinning-icon">🎡</span>
+        <span class="hud-title">Колесо Фортуни</span>
+        <span class="hud-badge-dot" id="wheelBadgeDot"></span>
+      </button>
+
+      <!-- Кнопка музики та випадаюча панель керування -->
+      <div class="music-player-wrap" id="musicPlayerWrap">
+        <button id="musicToggle" class="music-btn" aria-label="Музика" title="Відкрити керування музикою 🎶">
+          <div class="music-icon-wrap">
+            <span class="music-note" id="musicNoteIcon">🎵</span>
+            <div class="sound-wave">
+              <span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+          <span class="music-text">Krapiva Jazz</span>
+          <span class="music-arrow" id="musicArrow">🎚️</span>
+        </button>
+
+        <!-- Випадаюча панель керування музикою та гучністю -->
+        <div class="music-popover-panel hidden" id="musicPopover">
+          <div class="music-popover-header">
+            <div class="popover-title-row">
+              <span class="popover-badge">🎷</span>
+              <span class="popover-title">Krapiva Jazz</span>
+            </div>
+            <button type="button" class="popover-close-btn" id="closeMusicPopoverBtn" title="Сховати панель">✕</button>
+          </div>
+
+          <div class="music-popover-body">
+            <!-- Кнопки керування (Пауза/Грати та Мут) -->
+            <div class="music-actions-row">
+              <button type="button" id="musicPlayPauseBtn" class="music-action-pill" title="Пауза / Відтворення">
+                <span id="playPauseIcon">⏸️</span>
+                <span id="playPauseLabel">Пауза</span>
+              </button>
+
+              <button type="button" id="musicMuteBtn" class="music-action-pill mute-action-pill" title="Вимкнути звук (Мут)">
+                <span id="muteIcon">🔊</span>
+                <span id="muteLabel">Мут</span>
+              </button>
+            </div>
+
+            <!-- Повзунок гучності -->
+            <div class="volume-slider-box">
+              <div class="volume-labels-row">
+                <span class="vol-label">Гучність:</span>
+                <span class="vol-value" id="volumePercent">42%</span>
+              </div>
+              <div class="vol-track-wrap">
+                <span class="vol-min-icon">🔈</span>
+                <input 
+                  type="range" 
+                  id="volumeSlider" 
+                  min="0" 
+                  max="100" 
+                  value="42" 
+                  class="volume-range-input" 
+                  aria-label="Рівень гучності"
+                >
+                <span class="vol-max-icon">🔊</span>
+              </div>
+            </div>
+
+            <!-- Швидкі пресети гучності -->
+            <div class="volume-presets-row">
+              <button type="button" class="vol-preset-btn" data-vol="0">🔇 0%</button>
+              <button type="button" class="vol-preset-btn" data-vol="25">🔉 25%</button>
+              <button type="button" class="vol-preset-btn active" data-vol="42">🎶 42%</button>
+              <button type="button" class="vol-preset-btn" data-vol="80">🔊 80%</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Canvas для живого зоряного неба та падаючих зірок -->
+  <canvas id="skyCanvas"></canvas>
+
+  <!-- Canvas для великих морозно-льодяникових знаків питання (?) на фоні -->
+  <canvas id="questionsCanvas" class="hidden-layer"></canvas>
+
+  <!-- ГОЛОВНА РЕАЛІСТИЧНА СЦЕНА (ФОТО-РЕАЛІЗМ ЗА СКЕТЧЕМ) -->
+  <div class="realistic-scene-layer">
+    <!-- Реалістична панорама: хатинка зліва обрізана краєм, ялинка по центру, звивиста 3D дорога, місяць справа -->
+    <div class="scenery-backdrop" style="background-image: url('winter_bg.jpg');"></div>
+
+    <!-- Декоративне тепле сяйво у вікнах хатини -->
+    <div class="window-warmth-glow"></div>
+
+    <!-- Реалістичний дим із димаря хатинки -->
+    <div class="chimney-smoke-spot" id="chimneySmoke"></div>
+
+    <!-- Декоративне сяйво місяця -->
+    <div class="moon-spot-glow"></div>
+
+    <!-- Мерехтливі вогники на ялинці в центрі -->
+    <div class="tree-lights-overlay" id="treeLights"></div>
+
+    <!-- РІДКІСНА МАШИНКА НА ЗАСНІЖЕНІЙ ДОРОЗІ (З 3D ПЕРСПЕКТИВОЮ, КРУТІННЯМ НА 360 І ФАРАМИ) -->
+    <div class="road-car-container" id="winterCar">
+      <div class="headlights-beam"></div>
+      <img src="car.png" alt="Новорічна машинка з ялинкою" class="car-sprite-img">
+    </div>
+  </div>
+
+  <!-- Клікабельний шар новорічних пасхалок (Місяць та Вікна хатинки) з високим z-index -->
+  <div class="easter-eggs-clickable-layer" id="easterEggsClickLayer">
+    <!-- Пасхалка 1: Вікна хатинки (зліва) -->
+    <div class="chalet-interactive-zone clickable-easter-egg" id="chaletWindowsHotspot" title="Затишні віконця хатинки ✨ (клікни!)" role="button" tabindex="0">
+      <span class="hotspot-halo"></span>
+      <span class="easter-hint-sparkle">✨</span>
+      <span class="easter-hover-badge">Шале 🏡</span>
+    </div>
+
+    <!-- Пасхалка 2: Чарівний Місяць (справа вгорі) -->
+    <div class="moon-interactive-zone clickable-easter-egg" id="moonHotspot" title="Чарівний місяць 🌙 (клікни!)" role="button" tabindex="0">
+      <span class="hotspot-halo"></span>
+      <span class="easter-hover-badge">Місяць ✨</span>
+    </div>
+  </div>
+
+  <!-- Canvas для реалістичного 3D-снігопаду (падає поверх сцени та дороги) -->
+  <canvas id="snowCanvas"></canvas>
+
+  <!-- Міні-лічильник зловлених сніжинок (для ачівки "Снігова королева") -->
+  <div class="snowflake-catch-badge" id="snowCatchBadge">
+    <span class="catch-icon">❄️</span>
+    <span class="catch-text" id="snowCatchCount">0 / 50</span>
+  </div>
+
+  <!-- ========================================================
+       ЕКРАН 1: ГОЛОВНА ЗАСНІЖЕНА ДЕРЕВ'ЯНА ВИВІСКА (ЛОГІН ТА ПАРОЛЬ)
+       ======================================================== -->
+  <main class="main-stage" id="loginStage">
+    <div class="wooden-sign-wrapper" id="signWrapper">
+      <!-- Металеві ковані ланцюги зверху -->
+      <div class="chains-container">
+        <div class="chain chain-left">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="chain chain-right">
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <!-- Пишна снігова шапка на вивісці з кришталевими бурульками -->
+      <div class="snow-cap">
+        <svg viewBox="0 0 420 50" preserveAspectRatio="none" class="snow-cap-svg">
+          <path d="M 5,40 
+                   C 25,12 60,10 90,20 
+                   C 120,5 160,8 200,18 
+                   C 240,4 290,12 330,22 
+                   C 365,8 400,15 415,40 
+                   L 415,45 L 5,45 Z" fill="#FFFFFF"/>
+          <polygon points="45,40 48,52 51,40" fill="#E0F2FE"/>
+          <polygon points="110,40 114,56 118,40" fill="#E0F2FE"/>
+          <polygon points="180,40 183,50 186,40" fill="#E0F2FE"/>
+          <polygon points="260,40 264,57 268,40" fill="#E0F2FE"/>
+          <polygon points="340,40 343,51 346,40" fill="#E0F2FE"/>
+          <polygon points="390,40 392,48 394,40" fill="#E0F2FE"/>
+        </svg>
+      </div>
+
+      <!-- Сама дерев'яна дошка -->
+      <div class="wooden-board" id="woodenBoard">
+        <div class="nail nail-tl"></div>
+        <div class="nail nail-tr"></div>
+        <div class="nail nail-bl"></div>
+        <div class="nail nail-br"></div>
+        <div class="wood-grain-overlay"></div>
+
+        <!-- КАРТКА ФОРМИ ВХОДУ -->
+        <div class="board-content" id="loginCard">
+          <div class="board-top-header">
+            <div class="festive-badge">❄️ 🌲 ❄️</div>
+            <h1 class="board-main-title">Новорічна Казка</h1>
+            <p class="board-sub-title">Зазирни у чарівний світ зимового свята</p>
+          </div>
+
+          <!-- Блок швидкого продовження зі збереженого стану -->
+          <div id="resumeQuestBox" class="resume-quest-card hidden">
+            <div class="resume-quest-info">
+              <span class="resume-icon">✨</span>
+              <div class="resume-text-col">
+                <span class="resume-title">Збережений прогрес знайдено!</span>
+                <span class="resume-subtitle" id="resumeStageDesc">Ти вже розпочала зимову подорож</span>
+              </div>
+            </div>
+            <button type="button" id="resumeQuestBtn" class="festive-action-btn resume-main-btn">
+              <span>Продовжити подорож 🚀</span>
+            </button>
+          </div>
+
+          <form id="loginForm" class="board-inputs-form" autocomplete="off" onsubmit="return false;" novalidate>
+            <!-- Введення Імені (Логін) -->
+            <div class="input-block">
+              <label for="userName" class="field-label">Ім'я чарівниці (Логін):</label>
+              <div class="field-control">
+                <span class="field-emoji">✨</span>
+                <input 
+                  type="text" 
+                  id="userName" 
+                  class="wood-input" 
+                  placeholder="Введи «Вікторія» або «Віка»..." 
+                  spellcheck="false"
+                  autofocus
+                >
+              </div>
+            </div>
+
+            <!-- Введення Пароля -->
+            <div class="input-block">
+              <label for="userPassword" class="field-label">Секретний пароль:</label>
+              <div class="field-control">
+                <span class="field-emoji">🔒</span>
+                <input 
+                  type="password" 
+                  id="userPassword" 
+                  class="wood-input" 
+                  placeholder="Введи пароль..." 
+                  maxlength="20"
+                >
+                <button type="button" id="togglePasswordBtn" class="pass-eye-btn" title="Показати/сховати пароль" aria-label="Показати пароль">
+                  👁️
+                </button>
+              </div>
+            </div>
+
+            <!-- Повідомлення про помилку -->
+            <div id="errorMessage" class="error-alert-box" aria-live="polite">
+              <span class="alert-icon">❄️</span>
+              <span id="errorText" class="alert-msg">Хмм, сніговичок не пускає... Спробуй ще раз!</span>
+            </div>
+
+            <!-- Кнопка Входу -->
+            <button type="submit" id="submitBtn" class="festive-action-btn">
+              <span class="btn-caption">Увійти до казки</span>
+              <span class="btn-magic-icon">✨</span>
+            </button>
+          </form>
+
+          <div class="board-bottom-footer">
+            <span class="footer-hint">Підказка: пароль знає тільки автор привітання 😉</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================================
+       ЕКРАН 2: ЗАГАДКА ПРО ЛПШКУ ТА ІНТЕРАКТИВНА ПІЦА
+       ======================================================== -->
+  <div class="riddle-overlay-screen hidden" id="riddleStage">
+    <div class="riddle-panel-container" id="riddlePanel">
+      
+      <!-- Верхня панель навігації -->
+      <div class="panel-nav-bar">
+        <button type="button" id="riddleToHomeBtn" class="panel-nav-btn" title="Повернутися на головний екран">
+          <span>🏠 На головну</span>
+        </button>
+        <span class="panel-stage-indicator">Етап 1: Загадка та піца 🍕</span>
+        <button type="button" id="riddleToNextBtn" class="panel-nav-btn nav-btn-forward hidden" title="Перейти вперед до квесту">
+          <span>До квестів ➔</span>
+        </button>
+      </div>
+
+      <!-- ВЕРХНЯ ЧАСТИНА: ЗАПИТАННЯ ПРО ЛПШКУ -->
+      <div class="riddle-header-zone">
+        <span class="riddle-badge">❓ 🍕 ❓</span>
+        <h2 class="riddle-main-question">Хто твоя найкраща лпшка?</h2>
+        <p class="riddle-instruction">Відповідай щиро, щоб розблокувати таємну підказку!</p>
+
+        <!-- Форма для введення імені лпшки -->
+        <form id="friendForm" class="friend-answer-form" autocomplete="off" onsubmit="return false;" novalidate>
+          <div class="friend-input-wrapper">
+            <span class="friend-icon">💖</span>
+            <input 
+              type="text" 
+              id="friendNameInput" 
+              class="friend-input" 
+              placeholder="Ім'я твоєї найкращої подруги..." 
+              spellcheck="false"
+            >
+            <button type="submit" id="friendSubmitBtn" class="friend-check-btn">
+              <span>Відповісти</span>
+              <span>✨</span>
+            </button>
+          </div>
+          <div id="friendErrorMsg" class="friend-error-note hidden">
+            <span>❄️ Сніговичок каже: ні, це не вона! Згадай найдорожчу людину!</span>
+          </div>
+        </form>
+      </div>
+
+      <!-- НИЖНЯ ЧАСТИНА: ПІДКАЗКА ТА ІНТЕРАКТИВНА ПІЦА -->
+      <div class="pizza-quest-section locked" id="pizzaQuestSection">
+        
+        <div class="quest-locked-cover" id="questLockedCover">
+          <div class="lock-box">
+            <span class="lock-icon">🔒</span>
+            <p>Дай правильну відповідь на запитання вище, щоб розблокувати піцу та секретний шифр!</p>
+          </div>
+        </div>
+
+        <div class="quest-unlocked-content">
+          <!-- Свиток із секретною підказкою -->
+          <div class="clue-scroll-card">
+            <div class="clue-title-row">
+              <span class="clue-icon">📜</span>
+              <h3>Секретний рецепт дружби</h3>
+            </div>
+            <p class="clue-text" id="clueHintText">
+              🎉 <strong>Бінго! Це Настя!</strong> А ось і ваша спільна 4-смакова піца!<br>
+              <strong>Шифр:</strong> Натисни на <span class="highlight-pep">3 правильні пепероні</span> у вірному порядку!
+            </p>
+            <div class="clue-status-tracker">
+              <span>Прогрес шифру:</span>
+              <div class="tracker-dots">
+                <span class="dot" id="dot1">⚪</span>
+                <span class="dot" id="dot2">⚪</span>
+                <span class="dot" id="dot3">⚪</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Сповіщення від начинки -->
+          <div class="topping-feedback-bubble hidden" id="toppingFeedback">
+            <span id="feedbackIcon">🌶️</span>
+            <span id="feedbackMessage">Пепероні прийнято!</span>
+          </div>
+
+          <!-- КОЛО ПІЦИ (4 КУСОЧКИ З ІНТЕРАКТИВОМ) -->
+          <div class="interactive-pizza-wrapper">
+            <img src="pizza.png" alt="Чотири смаки піци" class="round-pizza-img">
+
+            <div class="sector-label label-pepperoni">🍕 Пепероні (Квест)</div>
+            <div class="sector-label label-cheese">🧀 4 Сири</div>
+            <div class="sector-label label-seafood">🦐 Морепродукти</div>
+            <div class="sector-label label-veggie">🫒 Овочева</div>
+
+            <!-- 5 пеперонин (порядок 1 -> 4 -> 2) -->
+            <button type="button" class="pizza-hotspot pep-spot" data-role="pep" data-id="1" style="left: 24%; top: 20%;" title="Пепероні №1">
+              <span class="spot-icon">🌶️</span>
+              <span class="spot-num">1</span>
+              <span class="hotspot-pulse pep-pulse"></span>
+            </button>
+            <button type="button" class="pizza-hotspot pep-spot" data-role="pep" data-id="2" style="left: 40%; top: 36%;" title="Пепероні №2">
+              <span class="spot-icon">🌶️</span>
+              <span class="spot-num">2</span>
+              <span class="hotspot-pulse pep-pulse"></span>
+            </button>
+            <button type="button" class="pizza-hotspot pep-spot" data-role="pep" data-id="3" style="left: 14%; top: 32%;" title="Пепероні №3">
+              <span class="spot-icon">🌶️</span>
+              <span class="spot-num">3</span>
+              <span class="hotspot-pulse pep-pulse"></span>
+            </button>
+            <button type="button" class="pizza-hotspot pep-spot" data-role="pep" data-id="4" style="left: 28%; top: 43%;" title="Пепероні №4">
+              <span class="spot-icon">🌶️</span>
+              <span class="spot-num">4</span>
+              <span class="hotspot-pulse pep-pulse"></span>
+            </button>
+            <button type="button" class="pizza-hotspot pep-spot" data-role="pep" data-id="5" style="left: 40%; top: 21%;" title="Пепероні №5">
+              <span class="spot-icon">🌶️</span>
+              <span class="spot-num">5</span>
+              <span class="hotspot-pulse pep-pulse"></span>
+            </button>
+
+            <!-- Пустишки -->
+            <button type="button" class="pizza-hotspot dummy-spot cheese-spot" data-role="cheese" data-msg="🧀 Сир тягнеться, але мовчить! Тобі потрібне щось пікантніше з ковбаскою!" style="left: 68%; top: 22%;" title="Сир та базилік">
+              <span class="spot-icon">🧀</span>
+              <span class="hotspot-pulse cheese-pulse"></span>
+            </button>
+            <button type="button" class="pizza-hotspot dummy-spot cheese-spot" data-role="cheese" data-msg="🧀 Дорблю шепоче: ні, шукай пепероні!" style="left: 78%; top: 36%;" title="Горгонзола">
+              <span class="spot-icon">🧀</span>
+              <span class="hotspot-pulse cheese-pulse"></span>
+            </button>
+
+            <button type="button" class="pizza-hotspot dummy-spot seafood-spot" data-role="seafood" data-msg="🦐 Креветка махає хвостиком: смачно, але це не пепероні!" style="left: 23%; top: 68%;" title="Королівська креветка">
+              <span class="spot-icon">🦐</span>
+              <span class="hotspot-pulse seafood-pulse"></span>
+            </button>
+            <button type="button" class="pizza-hotspot dummy-spot seafood-spot" data-role="seafood" data-msg="🦑 Кільце кальмара: холодно! Шукай ковбаски чорізо!" style="left: 36%; top: 76%;" title="Кальмар">
+              <span class="spot-icon">🦑</span>
+              <span class="hotspot-pulse seafood-pulse"></span>
+            </button>
+
+            <button type="button" class="pizza-hotspot dummy-spot veggie-spot" data-role="veggie" data-msg="🫒 Оливка каже: ми корисні, але секрет схований у м'ясній частині!" style="left: 72%; top: 66%;" title="Маслина">
+              <span class="spot-icon">🫒</span>
+              <span class="hotspot-pulse veggie-pulse"></span>
+            </button>
+            <button type="button" class="pizza-hotspot dummy-spot veggie-spot" data-role="veggie" data-msg="🍄 Грибочок хитає капелюшком: спробуй пепероні!" style="left: 62%; top: 80%;" title="Печериця">
+              <span class="spot-icon">🍄</span>
+              <span class="hotspot-pulse veggie-pulse"></span>
+            </button>
+          </div>
+
+          <!-- Кнопка переходу далі після розгадки піци -->
+          <div id="pizzaSuccessBox" class="pizza-success-action hidden">
+            <p class="success-notice">🎉 Шифр розгадано! Але на тебе чекають ще таємничі загадки!</p>
+            <button id="toHolidayQuestBtn" class="festive-action-btn next-quest-big-btn">
+              <span>Перейти до наступних загадок 🎁✨</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       ЕКРАН 3: НОВИЙ БЛОК ЗАГАДОК (ЕМОДЗІ, БРЕЛОК, СПОГАД І МАЛЮНОК)
+       ======================================================== -->
+  <div class="riddle-overlay-screen hidden" id="holidayQuestStage">
+    <div class="riddle-panel-container quest-chain-panel">
+
+      <!-- Верхня панель навігації -->
+      <div class="panel-nav-bar">
+        <button type="button" id="questToRiddleBtn" class="panel-nav-btn" title="Повернутися до загадки з піцою">
+          <span>⬅️ До піци</span>
+        </button>
+        <span class="panel-stage-indicator" id="questStageIndicator">Етап 2: Зимові загадки ✨</span>
+        <button type="button" id="questToHomeBtn" class="panel-nav-btn" title="Повернутися на головну">
+          <span>🏠 На головну</span>
+        </button>
+      </div>
+
+      <!-- ЗАГАДКА 1: ЕМОДЗІ-РЕБУС -->
+      <div class="quest-step-block active" id="emojiStep">
+        <div class="step-badge-num">Крок 1 із 3</div>
+        <div class="emoji-rebus-display">
+          <span class="rebus-item">🎄</span>
+          <span class="rebus-plus">+</span>
+          <span class="rebus-item">🎁</span>
+          <span class="rebus-plus">+</span>
+          <span class="rebus-item clickable-clock" id="rebusClock" title="Опівнічний годинник 🕛 (клікни!)">🕛</span>
+          <span class="rebus-plus">+</span>
+          <span class="rebus-item">🎉</span>
+          <span class="rebus-equals">=</span>
+          <span class="rebus-item question-glow">❓</span>
+        </div>
+        <h3 class="step-question-text">Що це за чарівне свято?</h3>
+
+        <form id="emojiForm" class="quest-input-form" onsubmit="return false;" novalidate>
+          <div class="friend-input-wrapper">
+            <span class="friend-icon">❄️</span>
+            <input type="text" id="emojiInput" class="friend-input" placeholder="Твоя відповідь...">
+            <button type="submit" id="emojiSubmitBtn" class="friend-check-btn">
+              <span>Відповісти</span>
+            </button>
+          </div>
+          <div id="emojiError" class="friend-error-note hidden">
+            <span>Сніговичок підказує: подумай про ялинку, подарунки та північ! 🎄</span>
+          </div>
+        </form>
+
+        <div class="step-nav-row hidden" id="emojiNavRow">
+          <span></span>
+          <button type="button" id="emojiToKeychainBtn" class="step-nav-btn forward-btn">
+            <span>До загадки про брелок ➔</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ЗАГАДКА 2: БРЕЛОК (РЕЧ-МАНДРІВНИК) -->
+      <div class="quest-step-block hidden" id="keychainStep">
+        <div class="step-badge-num">Крок 2 із 3</div>
+        <span class="step-icon-top">🗝️</span>
+        <h3 class="step-question-text">
+          «Маленька річ, яка може подорожувати разом із тобою, побачити багато місць, але завжди повертатися додому. Що це?»
+        </h3>
+
+        <div class="step-nav-row" id="keychainNavRow">
+          <button type="button" id="keychainBackToEmojiBtn" class="step-nav-btn back-btn">
+            <span>⬅️ До емодзі-ребусу</span>
+          </button>
+          <button type="button" id="keychainToMemoryDirectBtn" class="step-nav-btn forward-btn hidden">
+            <span>До спогаду ➔</span>
+          </button>
+        </div>
+
+        <form id="keychainForm" class="quest-input-form" onsubmit="return false;" novalidate>
+          <div class="friend-input-wrapper">
+            <span class="friend-icon">🎒</span>
+            <input type="text" id="keychainInput" class="friend-input" placeholder="Введи назву предмета...">
+            <button type="submit" id="keychainSubmitBtn" class="friend-check-btn">
+              <span>Відповісти</span>
+            </button>
+          </div>
+          <div id="keychainError" class="friend-error-note hidden">
+            <span>Підказка: чіпляється на рюкзак, сумку або ключі! 🗝️</span>
+          </div>
+        </form>
+
+        <!-- Анімований підвішений брелок (відкривається при вірній відповіді) -->
+        <div id="keychainRewardBox" class="keychain-reward-area hidden">
+          <p class="keychain-instruction">🎉 Точно, брелок! Торкнися його, щоб почути святковий дзвін!</p>
+          <div class="hanging-keychain-wrapper" id="swingingKeychain">
+            <img src="keychain.png" alt="Новорічний святковий брелок" class="keychain-graphic">
+          </div>
+          <button id="toMemoryStepBtn" class="festive-action-btn next-to-memory-btn">
+            <span>До головної загадки зі спогадом ➔</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ЗАГАДКА 3: СПОГАД ТА ФОТО-ПАЗЛ -->
+      <div class="quest-step-block hidden" id="memoryStep">
+        <div class="step-badge-num">Крок 3 із 3 (Кульмінація)</div>
+        <span class="step-icon-top">✨</span>
+        <h3 class="step-question-text" id="memoryQuestionTitle">
+          «Щось, що не можна повернути назад, але можна зберегти назавжди. Воно не має голосу, проте здатне розповісти цілу історію. Що це?»
+        </h3>
+
+        <div class="step-nav-row" id="memoryNavRow">
+          <button type="button" id="memoryBackToKeychainBtn" class="step-nav-btn back-btn">
+            <span>⬅️ До загадки про брелок</span>
+          </button>
+        </div>
+
+        <form id="memoryForm" class="quest-input-form" onsubmit="return false;" novalidate>
+          <div class="friend-input-wrapper">
+            <span class="friend-icon">💭</span>
+            <input type="text" id="memoryInput" class="friend-input" placeholder="Що це за цінність?..">
+            <button type="submit" id="memorySubmitBtn" class="friend-check-btn">
+              <span>Відповісти</span>
+            </button>
+          </div>
+          <div id="memoryError" class="friend-error-note hidden">
+            <span>Підказка: це живе у серці та на спільних фотографіях! 💖</span>
+          </div>
+        </form>
+
+        <div id="memorySolvedBanner" class="memory-success-banner hidden">
+          <span class="badge-icon">💖</span>
+          <span>Відповідь: <strong>Спогад</strong> ✨ Склади святковий фото-пазл!</span>
+        </div>
+
+        <!-- Святковий фото-пазл з реального фото -->
+        <div id="friendsPhotoBox" class="friends-photo-quest-zone hidden">
+          <div class="polaroid-frame-card puzzle-polaroid" id="polaroidCard">
+            <div class="polaroid-header-note">Чарівний спогад 📸</div>
+            
+            <div class="puzzle-board-wrap">
+              <div class="puzzle-board" id="puzzleBoard">
+                <!-- 9 шматочків пазла з memory_photo.jpg -->
+              </div>
+            </div>
+
+            <div class="puzzle-caption-area">
+              <div class="puzzle-clue-label" id="puzzleStatusText">
+                Натискай на шматочки, щоб міняти їх місцями! ✨
+              </div>
+              <div class="puzzle-bottom-actions">
+                <div class="spots-counter-badge" id="puzzleCounterBadge">
+                  <span id="spotsFoundText">Зібрано: 0 з 9</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button id="finalFinishBtn" class="festive-action-btn grand-open-btn hidden">
+            <span>Відкрити головний новорічний подарунок 🎁✨</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================
+       ЕКРАН 4: ФІНАЛЬНЕ СВЯТКОВЕ ПРИВІТАНЯ ТА РОЗПАКОВКА ПОДАРУНКА
+       ======================================================== -->
+  <div class="final-celebration-modal hidden" id="finalModal">
+    <div class="final-scroll-container" id="finalScrollContainer">
+      <div class="final-modal-card">
+      <div class="final-nav-bar">
+        <button type="button" id="finalToQuestBtn" class="panel-nav-btn" title="Повернутися до квесту">
+          <span>⬅️ До квесту</span>
+        </button>
+        <button type="button" id="finalToHomeBtn" class="panel-nav-btn" title="Повернутися на головну">
+          <span>🏠 На головну</span>
+        </button>
+        <button type="button" id="closeFinalBtn" class="modal-close-cross" title="Закрити вікно">✕</button>
+      </div>
+      <div class="celebration-confetti-wrap">
+        <span>🎉</span><span>✨</span><span>🍾</span><span>🌟</span>
+      </div>
+      <h1 class="final-title">Фінал новорічного квесту! 🎄🥂</h1>
+      <p class="final-subtitle">Ти пройшла всі зимові випробування та шифри дружби!</p>
+      
+      <!-- Зворотний відлік -->
+      <div class="timer-card-wrapper">
+        <span class="timer-title">До бою курантів 2027 року залишилось:</span>
+        <div class="timer-digits-row" id="countdownTimer">
+          <div class="digit-box"><span id="days">00</span><label>днів</label></div>
+          <div class="digit-box"><span id="hours">00</span><label>годин</label></div>
+          <div class="digit-box"><span id="minutes">00</span><label>хвилин</label></div>
+          <div class="digit-box"><span id="seconds">00</span><label>секунд</label></div>
+        </div>
+      </div>
+
+      <div class="gift-lock-warning" id="giftLockWarning">
+        <span class="lock-icon">🔒</span>
+        <span class="lock-text">Секретний лист від Kir під чарівним замком! Збери щонайменше <strong>7 з 13</strong> досягнень, щоб розпакувати його (зараз: <strong id="giftCurrentCount">0</strong>/7).</span>
+      </div>
+
+      <div class="gift-btn-wrap">
+        <button id="finalGiftBtn" class="festive-action-btn gift-open-btn">
+          <span id="finalGiftBtnText">Розпакувати лист від Kir 💌✨</span>
+        </button>
+      </div>
+
+      <!-- Святковий сюрприз після натискання кнопки: лист від Kir відкривається ТІЛЬКИ при виконанні досягнень -->
+      <div id="giftSurpriseBox" class="gift-surprise-card hidden">
+        <div class="surprise-icon-burst">💌 ✨ 🎄 💖</div>
+        <h3 class="surprise-title">Твій новорічний подарунок від Kir відкрито!</h3>
+
+        <!-- ГОЛОВНИЙ ДУШЕВНИЙ ЛИСТ ВІД KIR (ВІДКРИВАЄТЬСЯ ЗА 7 З 12 ДОСЯГНЕНЬ) -->
+        <div class="final-letter-card">
+          <div class="letter-top-seal">🎄 ❤️ ❄️</div>
+          <h2 class="letter-heading">З Новим роком! ❤️</h2>
+          <div class="letter-body-text">
+            <p>Ну що ж, вітаю тебе з Новим роком!</p>
+            <p>Я сподіваюся, що всі проблеми ти залишиш у минулому році, а спогади забереш із собою, якими б вони не були.</p>
+            <p>Цей квест я хотів зробити незвичайним, але вийшло вже як вийшло. Хоча, якщо чесно, мені подобається те, що вийшло. Сподіваюся, загадки тобі здалися прикольними, хоч і короткими. А особливо пісня))))</p>
+            <p>Дякую тобі за спілкування, за моменти, які ми розділили, і за те, що ти є частиною мого життя.</p>
+            <p class="letter-highlight">З Новим роком! Нехай він буде до тебе добрим. ❤️</p>
+          </div>
+          <div class="letter-signature-block">
+            <span class="signature-wishes">З найкращими побажаннями,</span>
+            <span class="signature-author">Kir.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Супер-бонус для ачівки "Колекціонерка" (якщо зібрано всі досягнення) -->
+      <div id="collectorSuperBadge" class="collector-super-badge hidden">
+        <div class="collector-crown">👑 ✨ 🌟</div>
+        <h4 class="collector-title">СУПЕР-БОНУС ВІД KIR ДЛЯ КОЛЕКЦІОНЕРКИ!</h4>
+        <p class="collector-text">
+          «Ти зібрала абсолютно ВСІ 100% таємниць та нагород цього квесту! Ти неймовірна подруга і справжня чарівниця! Нехай 2027 рік стане найщасливішим у твоєму житті!» ❤️✨
+        </p>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- СПЛИВАЮЧЕ ПОВІДОМЛЕННЯ ПРО НОВЕ ДОСЯГНЕННЯ (TOAST ЗВЕРХУ) -->
+  <aside class="achievement-toast-container" id="achievementToast" role="alert" aria-live="polite">
+    <div class="toast-sparkles">✨</div>
+    <div class="toast-icon-wrap" id="toastIcon">🏆</div>
+    <div class="toast-body">
+      <span class="toast-badge-title">НОВЕ ДОСЯГНЕННЯ! ❄️</span>
+      <h4 class="toast-name" id="toastName">Знавець лпшки</h4>
+      <p class="toast-desc" id="toastDesc">Правильна відповідь з першої спроби!</p>
+    </div>
+  </aside>
+
+  <!-- МОДАЛЬНЕ ВІКНО «МОЇ НАГОРОДИ» -->
+  <div class="rewards-modal-overlay hidden" id="rewardsModal">
+    <div class="rewards-modal-card">
+      <button class="modal-close-cross" id="closeRewardsBtn" title="Закрити нагороди">✕</button>
+      
+      <div class="rewards-header">
+        <div class="rewards-icon-top">🏆</div>
+        <h2 class="rewards-main-title">Мої Новорічні Досягнення</h2>
+        <p class="rewards-subtitle">
+          Щоб відкрити фінальний новорічний подарунок, збери <strong>7 з 13</strong> досягнень!
+        </p>
+        
+        <!-- Прогрес-бар -->
+        <div class="rewards-progress-panel">
+          <div class="progress-labels">
+            <span class="progress-title">Прогрес розблокування фіналу:</span>
+            <span class="progress-ratio" id="modalAchieveRatio">0 / 7</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-bar-fill" id="modalProgressBar" style="width: 0%;"></div>
+          </div>
+          <div class="progress-status-note" id="modalProgressNote">
+            🔒 Потрібно ще 7 досягнень для відкриття подарунка
+          </div>
+        </div>
+      </div>
+
+      <!-- Список категорій -->
+      <div class="achievements-scroll-area">
+        <!-- 1. Квести -->
+        <div class="achieve-category-block">
+          <h3 class="category-heading">🎯 Сюжетні квести</h3>
+          <div class="achieve-grid" id="gridQuests"></div>
+        </div>
+
+        <!-- 2. Пасхалки -->
+        <div class="achieve-category-block">
+          <h3 class="category-heading">❄️ Новорічні пасхалки</h3>
+          <div class="achieve-grid" id="gridEaster"></div>
+        </div>
+
+        <!-- 3. Поведінка -->
+        <div class="achieve-category-block">
+          <h3 class="category-heading">🕯️ Характер та поведінка</h3>
+          <div class="achieve-grid" id="gridBehavior"></div>
+        </div>
+
+        <!-- 4. Колесо та особливі -->
+        <div class="achieve-category-block">
+          <h3 class="category-heading">⭐ Колесо Фортуни та Секрети</h3>
+          <div class="achieve-grid" id="gridSpecial"></div>
+        </div>
+      </div>
+
+      <!-- Футер модалки з кнопкою очищення прогресу -->
+      <div class="rewards-footer-actions">
+        <button type="button" id="rewardsResetBtn" class="reset-all-btn" title="Очистити весь збережений прогрес гри">
+          <span>🔄 Очистити прогрес (скинути все)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНЕ ВІКНО «КОЛЕСО ФОРТУНИ» -->
+  <div class="wheel-modal-overlay hidden" id="wheelModal">
+    <div class="wheel-modal-card">
+      <button class="modal-close-cross" id="closeWheelBtn" title="Закрити Колесо">✕</button>
+      
+      <div class="wheel-header">
+        <div class="wheel-badge-top">✨ 🎡 ✨</div>
+        <h2 class="wheel-main-title">Колесо Новорічної Фортуни</h2>
+        <p class="wheel-subtitle">Випробовуй удачу та крути святкове колесо теплих призів!</p>
+      </div>
+
+      <!-- Сама конструкція колеса -->
+      <div class="wheel-stage-container">
+        <!-- Стрілочка-покажчик зверху -->
+        <div class="wheel-pointer-arrow">
+          <span class="pointer-needle">▼</span>
+        </div>
+        
+        <!-- Кругле колесо -->
+        <div class="wheel-disc-wrap">
+          <canvas id="wheelCanvas" width="420" height="420" class="wheel-canvas"></canvas>
+          <div class="wheel-center-pin">
+            <span>🎄</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="wheel-action-bar">
+        <button id="spinWheelBtn" class="festive-action-btn spin-btn">
+          <span>Крутити Колесо! 🎯</span>
+        </button>
+      </div>
+
+      <!-- Виграний приз -->
+      <div id="wheelResultBox" class="wheel-result-box hidden">
+        <div class="result-prize-icon" id="prizeIcon">🎁</div>
+        <h3 class="result-prize-title" id="prizeTitle">Головний Приз!</h3>
+        <p class="result-prize-desc" id="prizeDesc">Опис призу...</p>
+        <button id="spinAgainBtn" class="spin-again-mini-btn">
+          <span>Крутити ще раз 🔄</span>
+        </button>
+      </div>
+
+      <div class="wheel-footer-note">
+        <p>💡 <em>Головний новорічний приз має рідкісний шанс випадання (4%). Всі інші сектори дарують щире тепло та усмішку!</em></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
