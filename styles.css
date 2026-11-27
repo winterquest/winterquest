@@ -2010,14 +2010,23 @@ html, body {
   100% { transform: scale(1.2); opacity: 1; }
 }
 
+@keyframes collectorGlowPulse {
+  0% {
+    box-shadow: 0 0 24px rgba(245, 158, 11, 0.38), inset 0 0 12px rgba(253, 224, 71, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 38px rgba(245, 158, 11, 0.58), inset 0 0 18px rgba(253, 224, 71, 0.34);
+  }
+}
+
 .collector-super-badge {
-  margin: 18px 0;
-  padding: 20px;
-  background: linear-gradient(135deg, rgba(217, 119, 6, 0.3) 0%, rgba(245, 158, 11, 0.15) 100%);
+  margin: 20px 0 6px;
+  padding: 24px 22px;
+  background: linear-gradient(135deg, rgba(180, 83, 9, 0.28) 0%, rgba(28, 15, 6, 0.94) 100%);
   border: 2px solid #fde047;
-  border-radius: 16px;
-  box-shadow: 0 0 35px rgba(245, 158, 11, 0.5), inset 0 0 15px rgba(253, 224, 71, 0.3);
-  animation: polaroidCelebrationPulse 2.5s infinite alternate ease-in-out;
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.45), inset 0 0 15px rgba(253, 224, 71, 0.25);
+  animation: collectorGlowPulse 2.8s infinite alternate ease-in-out;
 }
 
 .collector-crown {
@@ -2030,16 +2039,35 @@ html, body {
   font-family: var(--font-title);
   color: #fde047;
   font-size: 1.25rem;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
-.collector-text {
+.collector-letter-body {
+  text-align: left;
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 1rem;
-  line-height: 1.5;
+  font-size: 1.03rem;
+  line-height: 1.72;
   color: #fffbeb;
+}
+
+.collector-letter-body p {
+  margin-bottom: 13px;
+}
+
+.collector-letter-body p:last-child {
+  margin-bottom: 0;
+}
+
+.collector-intro-shout {
+  font-weight: 600;
+  color: #fde68a;
+}
+
+.letter-section-lead {
+  font-weight: 700;
+  color: #fde047;
 }
 
 .hidden {
@@ -3129,6 +3157,10 @@ html, body {
 
   .final-scroll-container { top: 56px; padding: 8px 8px 34px; }
   .final-modal-card { padding: 20px 14px; }
+  .gift-surprise-card { padding: 18px 12px; }
+  .final-letter-card { padding: 20px 15px; }
+  .collector-super-badge { padding: 18px 14px; }
+  .letter-body-text, .collector-letter-body { font-size: 0.96rem; line-height: 1.65; }
 
   .music-popover-panel {
     right: 0;

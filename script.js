@@ -898,8 +898,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updateHUDProgress();
     renderAchievementsModal();
 
-    // Перевірка на "Колекціонерку" (якщо зібрано всі інші 13)
-    if (id !== 'collector') {
+    // Перевірка на "Колекціонерку" (якщо зібрано всі інші 14)
+    if (id === 'collector' && questProgress.isGiftOpened && collectorSuperBadge) {
+      collectorSuperBadge.classList.remove('hidden');
+    } else if (id !== 'collector') {
       const allOtherKeys = Object.keys(ACHIEVEMENTS_DATA).filter(k => k !== 'collector');
       const allUnlocked = allOtherKeys.every(k => unlockedAchievements.has(k));
       if (allUnlocked && !unlockedAchievements.has('collector')) {
